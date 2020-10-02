@@ -1,0 +1,42 @@
+{
+	"type": "base",
+	"cuda": true,
+	"seed": 1,
+  
+	"model": "beta_mnist",
+	"input_dims": 1,
+	"z_dims": 2,
+	"mse_weight": 1,
+	"prior": "multivariate_normal",
+	"beta": 1,
+	"gamma": 4,
+	"C_max": 25,
+	"C_stop_iter": 100000,
+	"implicit": true,
+	"sampling_freq": 1,
+	"objective": "H",
+	"max_iter": 100000,
+	"batch_size": 100,
+	"lr": 0.0001,
+	"beta1": 0.9,
+	"beta2": 0.999,
+	"masks": [[1, 0], [0, 1], [1, 0], [0, 1], [1, 0], [0, 1]],
+  
+	"dset_dir": "/home/sci/riddhishb/Documents/git-repos/ImplicitPrior/comparators/data/mnist/",
+	"dataset": "MNIST",
+	"data_type": "image",
+	"augment": true,
+	"image_size": 28,
+	"num_workers": 2,
+  
+	"save_output": true,
+	"output_dir": "outputs/ivae_mnist",
+  
+	"gather_step": 1000,
+	"display_step": 10000,
+	"save_step": 10000,
+	"ckpt_dir": "checkpoints/ivae_mnist",
+	"ckpt_name": "best"
+  
+  }
+  

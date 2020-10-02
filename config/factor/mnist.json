@@ -1,0 +1,38 @@
+{
+  "type": "factor",
+  "cuda": true,
+  "seed": 1,
+
+  "model": "factor_mnist",
+  "input_dims": 1,
+  "z_dims": 2,
+  "prior": "multivariate_normal",
+  "gamma": 1000,
+	
+  "mse_weight": 1,
+  "max_iter": 100000,
+  "batch_size": 24,
+  "lr": 0.0001,
+  "beta1": 0.9,
+  "beta2": 0.999,
+  "D_lr": 0.0001,
+  "D_beta1": 0.9,
+  "D_beta2": 0.999,
+
+  "dset_dir": "/home/sci/riddhishb/Documents/git-repos/ImplicitPrior/comparators/data/mnist/",
+  "dataset": "MNIST",
+  "data_type": "image",
+  "augment": true,
+  "image_size": 28,
+  "num_workers": 2,
+
+  "save_output": true,
+  "output_dir": "outputs/factor_mnist",
+
+  "gather_step": 1000,
+  "display_step": 10000,
+  "save_step": 10000,
+  "ckpt_dir": "checkpoints/factor_mnist",
+  "ckpt_name": "best"
+
+}
