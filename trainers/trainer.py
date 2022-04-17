@@ -132,12 +132,14 @@ class Trainer(object):
                     if self.meta['loss'][-1] < best:
                         self.save_checkpoint('best')
                         best = self.meta['loss'][-1]
+                        print("Saving generated images for FID calculation")
+                        self.save_generated_images()
 
                 loop.update(1)
                 self.global_iter += 1
                 if self.global_iter > self.max_iter:
                     break
-        self.calculate_FID()
+
         loop.write("[Training Finished]")
         loop.close()
 
@@ -1093,7 +1095,7 @@ class Trainer(object):
             print('model couldnt load')
 
 
-    def save_images(self):
+    def save_generated_images(self):
         num_samples = self.batch_size
 
         generated_images = self.generate_sample(num_samples)
@@ -1102,13 +1104,13 @@ class Trainer(object):
         dataset_dir = self.output_dir + "/dataset/"
         os.makedirs(generated_dir, exist_ok=True)
         os.makedirs(dataset_dir, exist_ok=True)
-        print(generated_images)
+        
         for x in self.data_loader:
             for i in range(self.batch_size):
                 original = x[i, 0, :,:].cpu().detach().numpy()
                 generated = generated_images[i, 0, :,:].cpu().detach().numpy()
                 
-                print(original.shape,generated.shape)
+                
                 gen_filename = generated_dir + str('{}.png'.format(i))
                 org_filename = dataset_dir  + str('{}.png'.format(i))
 

@@ -34,8 +34,16 @@ conf = "config/vanilla/mnist.json"
 print(conf)
 config = json.load(open(conf))
 config['cont'] = False
-trainer = get_trainer(config)
-trainer.train()
+z_dim_array = [2,20,40,60,80]
+outDir = config["output_dir"]
+checkpointDir = config["ckpt_dir"]
+for z in z_dim_array:
+    config["z_dim"] = z
+    config["output_dir"] = outDir + "_" + str(z)
+    config["ckpt_dir"] = checkpointDir + "_" + str(z)
+
+    trainer = get_trainer(config)
+    trainer.train()
 
 # # get first look (only 10000 iterations)
 # for ci, conf in enumerate(configs):
