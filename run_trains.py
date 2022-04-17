@@ -9,27 +9,28 @@ from trainers.trainer import get_trainer
 # configs = [con for con in os.listdir(condir) if '.json' in con]
 # configs = configs[idx:]
 
-idx = 0
-if len(sys.argv) > 1:
-    idx = int(sys.argv[1])
-condir = 'config/factor'
-configs = [osp.join(condir, con) for con in os.listdir(condir) if 'celeba.json' in con]
-# condir = 'config/betatc'
-# configs = configs + [osp.join(condir, con) for con in os.listdir(condir) if 'celeba.json' in con]
-configs = configs[idx:]
+# idx = 0
+# if len(sys.argv) > 1:
+#     idx = int(sys.argv[1])
+# condir = 'config/factor'
+# configs = [osp.join(condir, con) for con in os.listdir(condir) if 'celeba.json' in con]
+# # condir = 'config/betatc'
+# # configs = configs + [osp.join(condir, con) for con in os.listdir(condir) if 'celeba.json' in con]
+# configs = configs[idx:]
 
-for ci, conf in enumerate(configs):
-    try:
-        print(conf)
-        config = json.load(open(conf))
-        config['cont'] = False
-        trainer = get_trainer(config)
-        trainer.train()
-    except Exception as e:
-        print(e)
-        print('failed on', conf, ',idx:', ci+idx)
+# for ci, conf in enumerate(configs):
+#     try:
+#         print(conf)
+#         config = json.load(open(conf))
+#         config['cont'] = False
+#         trainer = get_trainer(config)
+#         trainer.train()
+#     except Exception as e:
+#         print(e)
+#         print('failed on', conf, ',idx:', ci+idx)
 
-conf = 'config/betatc/ip_celeba.json'
+# conf = 'config/betatc/ip_celeba.json'
+conf = "config/vanilla/mnist.json"
 print(conf)
 config = json.load(open(conf))
 config['cont'] = False

@@ -16,7 +16,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.autograd import Variable
 from torchvision.utils import make_grid, save_image
-
+from PIL import Image
 from utils import cuda, grid2gif, KLdivergence
 from dataset import get_dataset
 from models.model import get_model
@@ -137,6 +137,7 @@ class Trainer(object):
                 self.global_iter += 1
                 if self.global_iter > self.max_iter:
                     break
+        self.calculate_FID()
         loop.write("[Training Finished]")
         loop.close()
 
@@ -268,7 +269,7 @@ class Trainer(object):
             x_recon = self.model(x.to(self.device))[0].detach()
         xgrid = make_grid(x)
         save_image(tensor=xgrid.cpu(), nrow=self.z_dims*x.size(0), pad_value=1,
-          filename=osp.join(output_dir, ori_name)
+          fp=osp.join(output_dir, ori_name)
         )
         # genpath = osp.join(output_dir, 'original')
         # os.makedirs(genpath, exist_ok=True)
@@ -278,7 +279,7 @@ class Trainer(object):
         #     filename=osp.join(genpath, 'original' + str(i) + '.png'))
         recon_grid = make_grid(x_recon)
         save_image(tensor=recon_grid.cpu(), nrow=self.z_dims*x_recon.size(0), pad_value=1,
-          filename=osp.join(output_dir, rec_name)
+          fp=osp.join(output_dir, rec_name)
         )
 
     def highLow_draw_reconstruction(self, x_low, x_high, low_name, high_name):
@@ -286,11 +287,11 @@ class Trainer(object):
         os.makedirs(output_dir, exist_ok=True)
         # xgrid = make_grid(x_low)
         save_image(tensor=x_low.cpu(), nrow=6, padding=0,
-          filename=osp.join(output_dir, low_name)
+          fp=osp.join(output_dir, low_name)
         )
         # recon_grid = make_grid(x_high)
         save_image(tensor=x_high.cpu(), nrow=6, padding=0,
-          filename=osp.join(output_dir, high_name)
+          fp=osp.join(output_dir, high_name)
         )
 
     def linear_reconstruction(self, x=None, x_recon=None):
@@ -450,7 +451,7 @@ class Trainer(object):
             for i in range(self.batch_size):
                 temp = hi_pts[i, ...]
                 save_image(tensor=temp.cpu(), nrow=self.z_dims*hi_pts.size(0), pad_value=1,
-                  filename=osp.join(genpath, 'highpos' + str(k*self.batch_size + i) + '.png')
+                  fp=osp.join(genpath, 'highpos' + str(k*self.batch_size + i) + '.png')
                 )
 
 
@@ -464,7 +465,7 @@ class Trainer(object):
             for i in range(self.batch_size):
                 temp = x[i, ...]
                 save_image(tensor=temp.cpu(), nrow=self.z_dims*x.size(0), pad_value=1,
-                filename=osp.join(genpath, 'original' + str(count*self.batch_size + i) + '.png'))
+                fp=osp.join(genpath, 'original' + str(count*self.batch_size + i) + '.png'))
             count += 1
 
     def generate_lowpos_samples(self, numGen):
@@ -486,7 +487,7 @@ class Trainer(object):
             for i in range(self.batch_size):
                 temp = low_pts[i, ...]
                 save_image(tensor=temp.cpu(), nrow=self.z_dims*low_pts.size(0), pad_value=1,
-                  filename=osp.join(genpath, 'lowpos' + str(count*self.batch_size + i) + '.png')
+                  fp=osp.join(genpath, 'lowpos' + str(count*self.batch_size + i) + '.png')
                 )
             count +=1
             if count*self.batch_size > numGen - 1:
@@ -506,7 +507,7 @@ class Trainer(object):
             for i in range(self.batch_size):
                 temp = gen_x[i, ...]
                 save_image(tensor=temp.cpu(), nrow=self.z_dims*gen_x.size(0), pad_value=1,
-                filename=osp.join(genpath, 'generated' + str(k*self.batch_size + i) + '.png'))
+                fp=osp.join(genpath, 'generated' + str(k*self.batch_size + i) + '.png'))
 
     def draw_generated(self):
         output_dir = osp.join(self.output_dir, str(self.global_iter))
@@ -514,7 +515,7 @@ class Trainer(object):
         gen_x = self.generate_sample(30)
         # gen_grid = make_grid(gen_x)
         save_image(tensor=gen_x.cpu(), nrow=6, padding=0,
-          filename=osp.join(output_dir, 'generated.png')
+          fp=osp.join(output_dir, 'generated.png')
         )
 
 
@@ -824,7 +825,7 @@ class Trainer(object):
                     gifs.append(sample)
             samples = torch.cat(samples, dim=0).cpu()
             save_image(tensor=samples.cpu(), nrow=self.z_dims, pad_value=1,
-              filename=osp.join(output_dir, '{}.png'.format(key))
+              fp=osp.join(output_dir, '{}.png'.format(key))
             )
         self.model.train()
 
@@ -979,7 +980,7 @@ class Trainer(object):
                 intrp_imgs.append(timg)
         intrp_imgs = torch.cat(intrp_imgs)
         save_image(tensor=intrp_imgs.cpu(), nrow=iterp_steps+1, pad_value=1,
-          filename=outfile + '_{}.png'.format('_'.join(zdims))
+          fp=outfile + '_{}.png'.format('_'.join(zdims))
         )
 
     def traverse_all(self, rimg1, rimg2, outfile, savenpy=False):
@@ -1024,7 +1025,7 @@ class Trainer(object):
                 tpts = torch.stack(tptsz0)
                 np.save(output_dir + '/' + nm + 'Z0.npy', tpts.cpu().detach().numpy())
         save_image(tensor=intrp_imgs.cpu(), nrow=iterp_steps+1, pad_value=1,
-          filename=outfile
+          fp=outfile
         )
 
     def traverse_z(self, rimg1, rimg2, outfile):
@@ -1057,7 +1058,7 @@ class Trainer(object):
         intrp_imgs.append(rimg2)
         intrp_imgs = torch.cat(intrp_imgs)
         save_image(tensor=intrp_imgs.cpu(), nrow=iterp_steps+1, pad_value=1,
-          filename=outfile
+          fp=outfile
         )
 
     # model save functions
@@ -1090,3 +1091,30 @@ class Trainer(object):
                 print("=> no checkpoint found at '{}'".format(file_path))
         except Exception as e:
             print('model couldnt load')
+
+
+    def save_images(self):
+        num_samples = self.batch_size
+
+        generated_images = self.generate_sample(num_samples)
+        
+        generated_dir = self.output_dir + "/generated/"
+        dataset_dir = self.output_dir + "/dataset/"
+        os.makedirs(generated_dir, exist_ok=True)
+        os.makedirs(dataset_dir, exist_ok=True)
+        print(generated_images)
+        for x in self.data_loader:
+            for i in range(self.batch_size):
+                original = x[i, 0, :,:].cpu().detach().numpy()
+                generated = generated_images[i, 0, :,:].cpu().detach().numpy()
+                
+                print(original.shape,generated.shape)
+                gen_filename = generated_dir + str('{}.png'.format(i))
+                org_filename = dataset_dir  + str('{}.png'.format(i))
+
+                Image.fromarray(np.uint8(original * 255),'L').save(org_filename)
+                Image.fromarray(np.uint8(generated * 255),'L').save(gen_filename)
+            break
+
+    
+        

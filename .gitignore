@@ -1,1 +1,7 @@
 *.pngs
+data/
+__pycache__/
+checkpoints/
+models/__pycache__/
+outputs/
+trainers/__pycache__/
