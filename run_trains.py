@@ -30,7 +30,7 @@ from trainers.trainer import get_trainer
 #         print('failed on', conf, ',idx:', ci+idx)
 
 # conf = 'config/betatc/ip_celeba.json'
-conf = "config/vanilla/mnist.json"
+conf = "config/vanilla/dp_mnist.json"
 print(conf)
 config = json.load(open(conf))
 config['cont'] = False

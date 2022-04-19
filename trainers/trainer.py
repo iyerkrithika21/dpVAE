@@ -88,6 +88,7 @@ class Trainer(object):
         self.dset_dir = config['dset_dir']
         self.dataset = config['dataset']
         self.data_type = config['data_type']
+
         if self.data_type == 'linear':
             self.draw_reconstruction = self.linear_reconstruction
             self.draw_generated = self.linear_generated
@@ -646,6 +647,7 @@ class Trainer(object):
             recon = self.model.decoder(qzs.to(self.device)).detach().cpu().numpy()
         self.draw_qzs(qzs)
         sample_size = 5000 if self.data_type == 'linear' else self.batch_size
+        # input(sample_size)
         if self.img_size > 28:
             qz_samps = self.sample_qz(sample_size=sample_size)
         else:
@@ -723,7 +725,7 @@ class Trainer(object):
             logvars[i, :] = kk[:, self.z_dims:]
         count = 0
         for i in range(sample_size):
-            k = np.random.random_integers(0, N-1)
+            k = np.random.randint(0, N-1)
             d = self.val_loader.dataset[k]
             d = d.view(-1,1, 28, 28)
             x = d.to(self.device)
@@ -739,11 +741,11 @@ class Trainer(object):
     def sample_qz(self, sample_size=1000, qzs=None):
         N = len(self.val_loader.dataset)
         if qzs is not None:
-            ks = np.random.random_integers(0, N-1, sample_size)
+            ks = np.random.randint(0, N-1, sample_size)
             z = qzs[ks]
             return z
 
-        ks = np.random.random_integers(0, N-1, sample_size)
+        ks = np.random.randint(0, N-1, sample_size)
         imps = torch.cat(
           [self.val_loader.dataset[k].unsqueeze(0) for k in ks]
         )

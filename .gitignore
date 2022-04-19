@@ -1,4 +1,5 @@
 *.pngs
+*.csv
 data/
 __pycache__/
 checkpoints/
